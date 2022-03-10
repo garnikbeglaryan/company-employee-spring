@@ -6,7 +6,7 @@
 </head>
 <body>
 Add Employee:
-<form action="/addEmployee" method="post">
+<form action="/addEmployee" method="post" enctype="multipart/form-data">
     <input th:if="${employee != null}" type="hidden" th:value="${employee.id}" name="id">
     Name: <input type="text" name="name" th:value="${employee == null} ? '' : ${employee.name}"/> <br>
     surname:<input type="text" name="surname" th:value="${employee == null} ? '' : ${employee.surname}"/><br>
@@ -14,6 +14,8 @@ Add Employee:
     phone:<input type="text" name="phone" th:value="${employee == null} ? '' : ${employee.phone_number}"/><br>
     salary:<input type="text" name="salary" th:value="${employee == null} ? '' : ${employee.salary}"/><br>
     position:<input type="text" name="position" th:value="${employee == null} ? '' : ${employee.position}"/><br>
+    picture:<input type="file" name="picture"/><br>
+
     company:
     <select name="company.id">
         <option th:each="c :${companies}" th:text="${c.name}" th:value="${c.id}"></option>

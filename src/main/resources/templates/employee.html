@@ -28,7 +28,10 @@
         <td th:text="${e.salary}"></td>
         <td th:text="${e.position}"></td>
         <td th:text="${e.company.name}"></td>
+        <td><img th:if="${e.pic_url != null}" th:src="@{/getImage(picture=${e.pic_url})}" width="50" height="50"/>
+        </td>
         <td><a th:href="@{'/deleteEmployee/' + ${e.id}}">delete </a>
+    </tr>
 </table>
 </body>
 </html>
