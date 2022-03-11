@@ -1,56 +1,49 @@
 package com.example.companyemployeespring.controller;
 
 import com.example.companyemployeespring.entity.Employee;
-import com.example.companyemployeespring.repository.CompanyRepository;
-import com.example.companyemployeespring.repository.EmployeeRepository;
+import com.example.companyemployeespring.service.CompanyService;
+import com.example.companyemployeespring.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Controller
+@RequiredArgsConstructor
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
-    @Autowired
-    private CompanyRepository companyRepository;
+
+    private final EmployeeService employeeService;
+    private final CompanyService companyService;
+
 
     @Value("${companyemployeespring.upload.path}")
     private String imagePath;
 
     @GetMapping("/employee")
     public String employee(ModelMap map) {
-        List<Employee> allEmployee = employeeRepository.findAll();
-        map.addAttribute("allEmployee", allEmployee);
+        map.addAttribute("allEmployee", employeeService.findAll());
         return "/employee";
-
     }
 
 
     @GetMapping("/addEmployee")
     public String addEmployeePage(ModelMap map) {
-        map.addAttribute("companies", companyRepository.findAll());
+        map.addAttribute("companies", companyService.findAll());
         return "/saveEmployee";
     }
 
     @PostMapping("/addEmployee")
     public String addEmployee(@ModelAttribute Employee employee,
                               @RequestParam("picture") MultipartFile uploadedFile) throws IOException {
-
-        if (!uploadedFile.isEmpty()) {
-            String fileName = System.currentTimeMillis() + " " + uploadedFile.getOriginalFilename();
-            File newFile = new File(imagePath + fileName);
-            uploadedFile.transferTo(newFile);
-            employee.setPic_url(fileName);
-        }
-        employeeRepository.save(employee);
+        employeeService.save(employee, uploadedFile);
         return "redirect:/employee";
     }
 
@@ -62,7 +55,7 @@ public class EmployeeController {
 
     @GetMapping("/deleteEmployee/{id}")
     public String deleteCompany(@PathVariable("id") int id) {
-        employeeRepository.deleteById(id);
+        employeeService.deleteById(id);
         return "redirect:/employee";
     }
 }
